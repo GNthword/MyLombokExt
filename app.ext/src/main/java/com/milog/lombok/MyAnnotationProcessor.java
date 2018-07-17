@@ -1,9 +1,14 @@
 package com.milog.lombok;
 
 import com.milog.MyGetter;
+import com.milog.lombok.app.MyApp;
+import com.milog.lombok.javac.MiloProcessor;
 import com.sun.source.tree.Tree;
 import com.sun.tools.javac.api.JavacTrees;
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.Symbol;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
@@ -23,90 +28,62 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
+import javax.lang.model.element.Modifier;
 import javax.lang.model.element.TypeElement;
 import javax.tools.Diagnostic;
 
 /**
  * Created by miloway on 2018/7/12.
+ * Main
  */
 
 public class MyAnnotationProcessor extends AbstractProcessor {
-
-    private Messager messager;
-    private JavacTrees trees;
-    private TreeMaker treeMaker;
-    private Names names;
+    private MiloProcessor processor;
 
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        this.messager = processingEnv.getMessager();
-        this.trees = JavacTrees.instance(processingEnv);
-        Context context = ((JavacProcessingEnvironment) processingEnv).getContext();
-        this.treeMaker = TreeMaker.instance(context);
-        this.names = Names.instance(context);
+        MyApp.init();
+        processor = new MiloProcessor();
+        processor.init(processingEnv);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+        processor.process(annotations, roundEnv);
 
-        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(MyGetter.class);
-        messager.printMessage(Diagnostic.Kind.NOTE, "start " + set.size());
+//        Set<? extends Element> set = roundEnv.getElementsAnnotatedWith(MyGetter.class);
+//        messager.printMessage(Diagnostic.Kind.NOTE, "start " + set.size());
+//
+//
+//        messager.printMessage(Diagnostic.Kind.NOTE, "state " + roundEnv.processingOver());
+//
+//        for(Element element : set) {
+//            JCTree jcTree = trees.getTree(element);
+//            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + jcTree.getClass().getCanonicalName());
+////            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + jcTree.toString());
+//            //jcTree.accept(new TestTreeTranslator(messager));
+//            JCTree.JCVariableDecl variableDecl = (JCTree.JCVariableDecl) jcTree;
+//            //messager.printMessage(Diagnostic.Kind.NOTE, "tree" + variableDecl.toString());
+//            MyGetter myGetter = element.getAnnotation(MyGetter.class);
+//            myGetter.value();
+//            messager.printMessage(Diagnostic.Kind.NOTE, "mods " + variableDecl.mods);
+//            messager.printMessage(Diagnostic.Kind.NOTE, "mods type " + variableDecl.vartype);
+//            for (Modifier modifier :variableDecl.mods.getFlags() ) {
+//                modifier.equals(Modifier.PUBLIC);
+//            }
+//            messager.printMessage(Diagnostic.Kind.NOTE, "var type " + variableDecl.vartype.type.hasTag(TypeTag.BOOLEAN));
 
-        for(Element element : set) {
-            JCTree jcTree = trees.getTree(element);
-            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + jcTree.getClass().getCanonicalName());
-            jcTree.accept(new TreeTranslator() {
-                @Override
-                public void visitClassDef(JCTree.JCClassDecl jcClassDecl) {
-                    messager.printMessage(Diagnostic.Kind.NOTE, "class " + jcClassDecl.toString());
-                    List<JCTree.JCVariableDecl> jcVariableDeclList = List.nil();
 
-                    for (JCTree tree : jcClassDecl.defs) {
-                        if (tree.getKind().equals(Tree.Kind.VARIABLE)) {
-                            JCTree.JCVariableDecl jcVariableDecl = (JCTree.JCVariableDecl) tree;
-                            jcVariableDeclList = jcVariableDeclList.append(jcVariableDecl);
-                        }
-                    }
-                    messager.printMessage(Diagnostic.Kind.OTHER, "processing " + jcVariableDeclList.size());
 
-                    for (JCTree.JCVariableDecl jcVariableDecl : jcVariableDeclList) {
-                        messager.printMessage(Diagnostic.Kind.NOTE, jcVariableDecl.getName() + " has been processed");
-                        jcClassDecl.defs = jcClassDecl.defs.prepend(makeGetterMethodDecl(jcVariableDecl));
-                    }
-                    super.visitClassDef(jcClassDecl);
-                }
+//            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + variableDecl.init);
+//            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + variableDecl.name);
+//            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + variableDecl.nameexpr);
+//            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + variableDecl.mods);
+//            messager.printMessage(Diagnostic.Kind.NOTE, "tree " + variableDecl.vartype);
 
-                @Override
-                public void visitAnnotation(JCTree.JCAnnotation jcAnnotation) {
-                    super.visitAnnotation(jcAnnotation);
-                    messager.printMessage(Diagnostic.Kind.NOTE, "annotation " + jcAnnotation.toString());
-                    messager.printMessage(Diagnostic.Kind.NOTE, "annotation " + jcAnnotation.getKind() + " tag" + jcAnnotation.getTag());
-                    messager.printMessage(Diagnostic.Kind.NOTE, "annotation " + jcAnnotation.args + " tag" + jcAnnotation.attribute.toString());
-                    for (JCTree.JCExpression expression : jcAnnotation.args) {
-                        messager.printMessage(Diagnostic.Kind.NOTE, "annotation " + jcAnnotation.args.get(0).getClass().getCanonicalName());
-                        if (expression instanceof JCTree.JCAssign) {
-                            JCTree.JCAssign assign = (JCTree.JCAssign) expression;
-                            JCTree.JCIdent ident = (JCTree.JCIdent) assign.lhs;
-                            ident.getName();
 
-                            JCTree.JCLiteral literal = (JCTree.JCLiteral) assign.rhs;
-                            literal.getValue();
-
-                            messager.printMessage(Diagnostic.Kind.NOTE, "annotation " + ident.getName());
-                            messager.printMessage(Diagnostic.Kind.NOTE, "annotation " + literal.getValue());
-                        }
-                    }
-                }
-
-                @Override
-                public void visitMethodDef(JCTree.JCMethodDecl jcMethodDecl) {
-                    super.visitMethodDef(jcMethodDecl);
-                    messager.printMessage(Diagnostic.Kind.NOTE, "method name" + jcMethodDecl.name);
-                    messager.printMessage(Diagnostic.Kind.NOTE, "method params" + jcMethodDecl.params);
-                }
-            });
-        }
+//        }
 
         return true;
     }
@@ -124,15 +101,4 @@ public class MyAnnotationProcessor extends AbstractProcessor {
     }
 
 
-    private JCTree.JCMethodDecl makeGetterMethodDecl(JCTree.JCVariableDecl jcVariableDecl) {
-        ListBuffer<JCTree.JCStatement> statements = new ListBuffer<>();
-        statements.append(treeMaker.Return(treeMaker.Select(treeMaker.Ident(names.fromString("this")), jcVariableDecl.getName())));
-        JCTree.JCBlock body = treeMaker.Block(0, statements.toList());
-        return treeMaker.MethodDef(treeMaker.Modifiers(Flags.PUBLIC), getNewMethodName(jcVariableDecl.getName()), jcVariableDecl.vartype, null, null, null, body, null);
-    }
-
-    private Name getNewMethodName(Name name) {
-        String s = name.toString();
-        return names.fromString("get" + s.substring(0, 1).toUpperCase() + s.substring(1, name.length()));
-    }
 }

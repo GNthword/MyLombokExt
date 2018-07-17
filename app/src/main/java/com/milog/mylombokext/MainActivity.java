@@ -11,6 +11,9 @@ public class MainActivity extends Activity {
     @MyGetter("function_state")
     private String string;
 
+    @MyGetter("function_log_state")
+    private boolean isOpen;
+
     private TextView tvShow;
     @Override
     protected void onCreate(Bundle savedInstanceState) {

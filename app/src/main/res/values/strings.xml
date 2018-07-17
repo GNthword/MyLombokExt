@@ -2,4 +2,5 @@
     <string name="app_name">MyLombokExt</string>
 
     <string name="function_state">open</string>
+    <bool name="function_log_state">true</bool>
 </resources>
