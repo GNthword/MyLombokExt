@@ -9,13 +9,13 @@ import java.util.Properties;
  * Created by miloway on 2018/7/17.
  */
 
-public class BaseConfig {
+class BaseConfig {
 
     public static Properties properties;
 
     private final String APPLICATION_NAME = "application_name";
     private final String GET_APPLICATION_FUNCTION_NAME = "get_application_function_name";
-    private final String path = "app\\src\\main\\assets\\base.properties";;//"app.ext\\src\\main\\resources\\properties\\base.properties";
+    private final String path = "app\\src\\main\\assets\\annotation.properties";;//"app.ext\\src\\main\\resources\\properties\\annotation.properties";
 
     public BaseConfig () {
         init();

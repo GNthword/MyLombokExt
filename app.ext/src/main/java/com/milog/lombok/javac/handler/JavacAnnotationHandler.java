@@ -21,8 +21,8 @@
  */
 package com.milog.lombok.javac.handler;
 
-import com.sun.source.util.Trees;
-import com.sun.tools.javac.tree.JCTree;
+import com.milog.lombok.javac.JavacNode;
+import com.sun.tools.javac.tree.TreeMaker;
 
 import java.lang.annotation.Annotation;
 
@@ -30,25 +30,8 @@ import java.lang.annotation.Annotation;
  * Created by miloway on 2018/7/17.
  */
 
-public class JavacAnnotationHandler <T extends Annotation>{
-    protected Trees trees;
+public abstract class JavacAnnotationHandler <T extends Annotation> {
 
-    /**
-     * Called when an annotation is found that is likely to match the annotation you're interested in.
-     *
-     * Be aware that you'll be called for ANY annotation node in the source that looks like a match. There is,
-     * for example, no guarantee that the annotation node belongs to a method, even if you set your
-     * TargetType in the annotation to methods only.
-     *
-     * @param annotation The actual annotation - use this object to retrieve the annotation parameters.
-     * @param ast The javac AST node representing the annotation.
-     * @param annotationNode The Lombok AST wrapper around the 'ast' parameter. You can use this object
-     * to travel back up the chain (something javac AST can't do) to the parent of the annotation, as well
-     * as access useful methods such as generating warnings or errors focused on the annotation.
-     */
-    //public abstract void handle(AnnotationValues<T> annotation, JCTree.JCAnnotation ast, JavacNode annotationNode);
+    public abstract void handle(TreeMaker treeMaker, JavacNode node);
 
-    public void setTrees(Trees trees) {
-        this.trees = trees;
-    }
 }

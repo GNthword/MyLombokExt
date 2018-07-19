@@ -23,13 +23,51 @@
 package com.milog.lombok.javac.handler;
 
 import com.milog.MyGetter;
+import com.milog.lombok.javac.JavacNode;
+import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.ListBuffer;
+import com.sun.tools.javac.util.Name;
+import com.sun.tools.javac.util.Names;
+
+import javax.lang.model.element.Modifier;
 
 /**
  * Created by miloway on 2018/7/17.
  */
 
 public class GetterHandler  extends JavacAnnotationHandler<MyGetter>{
+    private Names names;
+
+    public GetterHandler(Context context) {
+        names = Names.instance(context);
+    }
+
+    @Override
+    public void handle(TreeMaker treeMaker, JavacNode node) {
+        JCTree.JCMethodDecl methodDecl = createGetterMethod(treeMaker, node.variableDecl);
+        node.classDecl.defs.prepend(methodDecl);
+    }
+
+    public JCTree.JCMethodDecl createGetterMethod(TreeMaker treeMaker, JCTree.JCVariableDecl variableDecl) {
+
+        Name methodName = getMethodName(variableDecl.name);
+        JCTree.JCReturn jcReturn = treeMaker.Return(treeMaker.Select(treeMaker.Ident(names.fromString("this")), variableDecl.getName()));
+        JCTree.JCModifiers modifiers = treeMaker.Modifiers(Flags.PUBLIC);
+        ListBuffer<JCTree.JCStatement> statements = new ListBuffer<>();
+        statements.append(jcReturn);
+        JCTree.JCBlock block = treeMaker.Block(Flags.BLOCK, statements.toList());
+
+        statements.clear();
+
+        return treeMaker.MethodDef(modifiers, methodName, variableDecl.vartype, null, null, null, block, null);
+    }
 
 
-
+    private Name getMethodName(Name name) {
+        String s = name.toString();
+        return names.fromString("get" + s.substring(0, 1).toUpperCase() + s.substring(1, name.length()));
+    }
 }
