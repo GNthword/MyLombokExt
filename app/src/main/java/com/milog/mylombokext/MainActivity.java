@@ -4,14 +4,14 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.milog.MyGetter;
+import com.milog.annotation.FunctionManager;
 
 public class MainActivity extends Activity {
 
-    @MyGetter("function_state")
-    private String string;
+    @FunctionManager("function_state")
+    private String string = com.milog.mylombokext.app.MyApplication.getApplication().getString(R.string.function_state);
 
-    @MyGetter("function_log_state")
+    //@FunctionManager("function_log_state")
     private boolean isOpen;
 
     private TextView tvShow;
@@ -26,6 +26,10 @@ public class MainActivity extends Activity {
         if (string != null) {
             tvShow.setText(string);
         }
+
+        User user = new User();
+        tvShow.setText(user.getName());
+
     }
 
 

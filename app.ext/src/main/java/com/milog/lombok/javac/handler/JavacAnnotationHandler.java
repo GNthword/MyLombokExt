@@ -1,30 +1,13 @@
-/*
- * Copyright (C) 2009-2012 The Project Lombok Authors.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
 package com.milog.lombok.javac.handler;
 
 import com.milog.lombok.javac.JavacNode;
 import com.sun.tools.javac.tree.TreeMaker;
+import com.sun.tools.javac.util.Context;
+import com.sun.tools.javac.util.Names;
 
 import java.lang.annotation.Annotation;
+
+import javax.annotation.processing.Messager;
 
 /**
  * Created by miloway on 2018/7/17.
@@ -32,6 +15,16 @@ import java.lang.annotation.Annotation;
 
 public abstract class JavacAnnotationHandler <T extends Annotation> {
 
+    protected Names names;
+    protected Messager messager;
+
+    JavacAnnotationHandler(Context context) {
+        names = Names.instance(context);
+    }
+
     public abstract void handle(TreeMaker treeMaker, JavacNode node);
 
+    public void setMessager(Messager messager) {
+        this.messager = messager;
+    }
 }

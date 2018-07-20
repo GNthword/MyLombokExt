@@ -82,7 +82,7 @@ public class MiloProcessor extends AbstractProcessor {
 
                                 for (Class<? extends Annotation> class1 : classes) {
                                     if (JavacProcessor.isAnnotationEqual(annotation, class1)) {
-                                        nodes.add(new JavacNode(classDecl, variableDecl, annotation));
+                                        nodes.add(new JavacNode(unit ,classDecl, variableDecl, annotation));
                                     }
                                 }
                             }

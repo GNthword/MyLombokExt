@@ -1,6 +1,8 @@
 package com.milog.lombok.app;
 
-import com.milog.MyGetter;
+import com.milog.annotation.FunctionManager;
+import com.milog.annotation.MyGetter;
+import com.milog.lombok.javac.handler.FunctionManagerHandler;
 import com.milog.lombok.javac.handler.GetterHandler;
 import com.milog.lombok.javac.handler.JavacAnnotationHandler;
 import com.sun.tools.javac.util.Context;
@@ -31,21 +33,57 @@ public class MyApp {
         return "";
     }
 
+    public static String getApplicationName() {
+        if (baseConfig == null) {
+            return "";
+        }
+        return baseConfig.getApplicationName();
+    }
+
+    public static String getApplicationNameWithPackage() {
+        if (baseConfig == null) {
+            return "";
+        }
+        return baseConfig.getApplicationPackage() + "." + baseConfig.getApplicationName();
+    }
+
+    public static String getApplicationPackage() {
+        if (baseConfig == null) {
+            return "";
+        }
+        return baseConfig.getApplicationPackage();
+    }
+
+    public static String getApplicationFunction() {
+        if (baseConfig == null) {
+            return "";
+        }
+        String function = baseConfig.getApplicationFunction();
+        if (!function.endsWith("()")) {
+            function += "()";
+        }
+        return function;
+    }
+
+
     public static Set<String> getAnnotations() {
-        Set<String> strings = new LinkedHashSet<String>(1);
+        Set<String> strings = new LinkedHashSet<String>(2);
         strings.add(MyGetter.class.getCanonicalName());
+        strings.add(FunctionManager.class.getCanonicalName());
         return strings;
     }
 
     public static List<Class<? extends Annotation>> getAnnotationClass() {
-        List<Class<? extends Annotation>> list = new ArrayList<Class<? extends Annotation>>(1);
+        List<Class<? extends Annotation>> list = new ArrayList<Class<? extends Annotation>>(2);
         list.add(MyGetter.class);
+        list.add(FunctionManager.class);
         return list;
     }
 
     public static HashMap<Class<? extends Annotation>, JavacAnnotationHandler> getAnnotationMap(Context context) {
-        HashMap<Class<? extends Annotation>, JavacAnnotationHandler> map = new HashMap<>(1);
+        HashMap<Class<? extends Annotation>, JavacAnnotationHandler> map = new HashMap<>(2);
         map.put(MyGetter.class, new GetterHandler(context));
+        map.put(FunctionManager.class, new FunctionManagerHandler(context));
         return map;
     }
 }

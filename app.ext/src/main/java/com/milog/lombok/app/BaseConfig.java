@@ -15,6 +15,7 @@ class BaseConfig {
 
     private final String APPLICATION_NAME = "application_name";
     private final String GET_APPLICATION_FUNCTION_NAME = "get_application_function_name";
+    private final String APPLICATION_PACKAGE = "application_package";
     private final String path = "app\\src\\main\\assets\\annotation.properties";;//"app.ext\\src\\main\\resources\\properties\\annotation.properties";
 
     public BaseConfig () {
@@ -39,6 +40,18 @@ class BaseConfig {
         }
 
         return name + "." + functionName;
+    }
+
+    public String getApplicationName() {
+        return properties.getProperty(APPLICATION_NAME, "");
+    }
+
+    public String getApplicationPackage() {
+        return properties.getProperty(APPLICATION_PACKAGE, "");
+    }
+
+    public String getApplicationFunction() {
+        return properties.getProperty(GET_APPLICATION_FUNCTION_NAME, "");
     }
 
 
