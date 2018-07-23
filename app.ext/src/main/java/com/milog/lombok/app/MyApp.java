@@ -2,6 +2,7 @@ package com.milog.lombok.app;
 
 import com.milog.annotation.FunctionManager;
 import com.milog.annotation.MyGetter;
+import com.milog.lombok.javac.Log;
 import com.milog.lombok.javac.handler.FunctionManagerHandler;
 import com.milog.lombok.javac.handler.GetterHandler;
 import com.milog.lombok.javac.handler.JavacAnnotationHandler;
@@ -14,12 +15,19 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.annotation.processing.Messager;
+
 public class MyApp {
 
     private static BaseConfig baseConfig;
 
-    public static void init() {
+    public static void init(Messager messager) {
         baseConfig = new BaseConfig();
+        Log.init(getLogState(), messager);
+    }
+
+    private static boolean getLogState() {
+        return baseConfig != null && baseConfig.getLogState();
     }
 
     private static String getApplication() {
@@ -59,9 +67,9 @@ public class MyApp {
             return "";
         }
         String function = baseConfig.getApplicationFunction();
-        if (!function.endsWith("()")) {
-            function += "()";
-        }
+        //if (!function.endsWith("()")) {
+            //function += "()";
+        //}
         return function;
     }
 
@@ -85,5 +93,9 @@ public class MyApp {
         map.put(MyGetter.class, new GetterHandler(context));
         map.put(FunctionManager.class, new FunctionManagerHandler(context));
         return map;
+    }
+
+    public static void destroy() {
+        Log.destroy();
     }
 }

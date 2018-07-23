@@ -7,18 +7,26 @@ import java.util.Properties;
 
 /**
  * Created by miloway on 2018/7/17.
+ * 基础配置
  */
 
 class BaseConfig {
 
-    public static Properties properties;
+    private static Properties properties;
+
+    private final String OPEN = "open";
+    private final String CLOSE = "close";
+
+
+    private final String LOG_STATE = "log_state";
+
 
     private final String APPLICATION_NAME = "application_name";
     private final String GET_APPLICATION_FUNCTION_NAME = "get_application_function_name";
     private final String APPLICATION_PACKAGE = "application_package";
     private final String path = "app\\src\\main\\assets\\annotation.properties";;//"app.ext\\src\\main\\resources\\properties\\annotation.properties";
 
-    public BaseConfig () {
+    BaseConfig () {
         init();
     }
 
@@ -32,7 +40,12 @@ class BaseConfig {
         }
     }
 
-    public String getApplication() {
+    boolean getLogState() {
+        String state = properties.getProperty(LOG_STATE, CLOSE);
+        return state.equals(OPEN);
+    }
+
+    String getApplication() {
         String name = properties.getProperty(APPLICATION_NAME, "");
         String functionName = properties.getProperty(GET_APPLICATION_FUNCTION_NAME, "");
         if (name.equals("") && functionName.equals("")) {
@@ -42,15 +55,15 @@ class BaseConfig {
         return name + "." + functionName;
     }
 
-    public String getApplicationName() {
+    String getApplicationName() {
         return properties.getProperty(APPLICATION_NAME, "");
     }
 
-    public String getApplicationPackage() {
+    String getApplicationPackage() {
         return properties.getProperty(APPLICATION_PACKAGE, "");
     }
 
-    public String getApplicationFunction() {
+    String getApplicationFunction() {
         return properties.getProperty(GET_APPLICATION_FUNCTION_NAME, "");
     }
 

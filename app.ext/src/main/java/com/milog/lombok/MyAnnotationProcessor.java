@@ -1,6 +1,7 @@
 package com.milog.lombok;
 
 import com.milog.lombok.app.MyApp;
+import com.milog.lombok.javac.Log;
 import com.milog.lombok.javac.MiloProcessor;
 import com.sun.tools.javac.main.JavaCompiler;
 import java.util.Set;
@@ -25,17 +26,20 @@ public class MyAnnotationProcessor extends AbstractProcessor {
     @Override
     public synchronized void init(ProcessingEnvironment processingEnv) {
         super.init(processingEnv);
-        MyApp.init();
         processor = new MiloProcessor();
         processor.init(processingEnv);
         messager = processingEnv.getMessager();
+        MyApp.init(messager);
     }
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        messager.printMessage(Diagnostic.Kind.NOTE, "" + JavaCompiler.version());
+        Log.print(Diagnostic.Kind.NOTE, "" + JavaCompiler.version());
         processor.process(annotations, roundEnv);
-
+        if (roundEnv.processingOver()) {
+            MyApp.destroy();
+            return false;
+        }
         return true;
     }
 

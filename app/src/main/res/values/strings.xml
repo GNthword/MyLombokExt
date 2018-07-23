@@ -3,4 +3,15 @@
 
     <string name="function_state">open</string>
     <bool name="function_log_state">true</bool>
+    <integer name="function_int">1</integer>
+
+    <string-array name="function_str_arr">
+        <item>xx</item>
+        <item>xxx</item>
+    </string-array>
+
+    <integer-array name="function_int_arr">
+        <item>1</item>
+        <item>2</item>
+    </integer-array>
 </resources>

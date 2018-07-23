@@ -9,7 +9,7 @@ import com.milog.annotation.FunctionManager;
 public class MainActivity extends Activity {
 
     @FunctionManager("function_state")
-    private String string = com.milog.mylombokext.app.MyApplication.getApplication().getString(R.string.function_state);
+    private String string;
 
     //@FunctionManager("function_log_state")
     private boolean isOpen;
@@ -28,7 +28,7 @@ public class MainActivity extends Activity {
         }
 
         User user = new User();
-        tvShow.setText(user.getName());
+        tvShow.setText(tvShow.getText() + "\n" + user.getName());
 
     }
 

@@ -10,8 +10,6 @@ import com.sun.tools.javac.util.List;
 import com.sun.tools.javac.util.ListBuffer;
 import com.sun.tools.javac.util.Name;
 
-import javax.annotation.processing.Messager;
-
 /**
  * Created by miloway on 2018/7/17.
  */
