@@ -34,12 +34,12 @@ public class MyAnnotationProcessor extends AbstractProcessor {
 
     @Override
     public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
-        Log.print(Diagnostic.Kind.NOTE, "" + JavaCompiler.version());
-        processor.process(annotations, roundEnv);
         if (roundEnv.processingOver()) {
             MyApp.destroy();
             return false;
         }
+        Log.print(Diagnostic.Kind.NOTE, "" + JavaCompiler.version());
+        processor.process(annotations, roundEnv);
         return true;
     }
 

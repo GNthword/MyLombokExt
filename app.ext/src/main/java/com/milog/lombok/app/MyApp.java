@@ -32,45 +32,34 @@ public class MyApp {
 
     private static String getApplication() {
         if (baseConfig == null) {
-            return "";
+            return null;
         }
         return baseConfig.getApplication();
     }
 
-    public static String getResourcesValue() {
-        return "";
-    }
-
     public static String getApplicationName() {
         if (baseConfig == null) {
-            return "";
+            return null;
         }
         return baseConfig.getApplicationName();
     }
 
-    public static String getApplicationNameWithPackage() {
-        if (baseConfig == null) {
-            return "";
-        }
-        return baseConfig.getApplicationPackage() + "." + baseConfig.getApplicationName();
-    }
-
     public static String getApplicationPackage() {
         if (baseConfig == null) {
-            return "";
+            return null;
         }
         return baseConfig.getApplicationPackage();
     }
 
     public static String getApplicationFunction() {
         if (baseConfig == null) {
-            return "";
+            return null;
         }
-        String function = baseConfig.getApplicationFunction();
-        //if (!function.endsWith("()")) {
-            //function += "()";
-        //}
-        return function;
+        return baseConfig.getApplicationFunction();
+    }
+
+    public static String getResourceFunction() {
+        return "getResources";
     }
 
 

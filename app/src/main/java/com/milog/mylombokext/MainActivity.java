@@ -11,8 +11,17 @@ public class MainActivity extends Activity {
     @FunctionManager("function_state")
     private String string;
 
-    //@FunctionManager("function_log_state")
+    @FunctionManager("function_log_state")
     private boolean isOpen;
+
+    @FunctionManager("function_str_arr")
+    private String[] strings;
+
+    @FunctionManager("function_int")
+    private int intTest;
+
+    @FunctionManager("function_int_arr")
+    private int[] ints;
 
     private TextView tvShow;
     @Override
@@ -23,13 +32,29 @@ public class MainActivity extends Activity {
 
         //tvShow.setText(FunctionManager.getProperty("function_state"));
 
-        if (string != null) {
-            tvShow.setText(string);
-        }
-
         User user = new User();
-        tvShow.setText(tvShow.getText() + "\n" + user.getName());
 
+        tvShow.setText(user.getName() + "\n" + getShowString());
+    }
+
+    private String getShowString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("string：").append(string)
+                .append("\nisOpen：").append(isOpen)
+                .append("\nstrings：");
+        if (strings != null) {
+            for (String s : strings) {
+                sb.append(s).append(" ");
+            }
+        }
+        sb.append("\nint：").append(intTest)
+                .append("\nints：");
+        if (ints != null) {
+            for (int i : ints) {
+                sb.append(i).append(" ");
+            }
+        }
+        return sb.toString();
     }
 
 

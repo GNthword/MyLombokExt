@@ -22,6 +22,9 @@ import javax.tools.Diagnostic;
 public class FunctionManagerHandler extends JavacAnnotationHandler<FunctionManager> {
 
     private final String TAG = "fm ";
+    private final String stringType = "java.lang.String";
+    private final String stringArrType = "java.lang.String[]";
+    private final String intArrType = "int[]";
 
     public FunctionManagerHandler(Context context) {
         super(context);
@@ -48,12 +51,9 @@ public class FunctionManagerHandler extends JavacAnnotationHandler<FunctionManag
         Log.print(Diagnostic.Kind.NOTE, TAG + node.variableDecl.init.getClass().getCanonicalName());
 
         JCTree.JCMethodInvocation jcMethodInvocation = (JCTree.JCMethodInvocation) node.variableDecl.init;
-        Log.print(Diagnostic.Kind.NOTE, TAG + jcMethodInvocation.typeargs);
         Log.print(Diagnostic.Kind.NOTE, TAG + jcMethodInvocation.meth);
         Log.print(Diagnostic.Kind.NOTE, TAG + jcMethodInvocation.args);
-        Log.print(Diagnostic.Kind.NOTE, TAG + jcMethodInvocation.varargsElement);
 
-        Log.print(Diagnostic.Kind.NOTE, TAG + jcMethodInvocation.meth.getClass().getCanonicalName());
     }
 
     private String getValue(JCTree.JCAnnotation jcAnnotation) {
@@ -77,50 +77,76 @@ public class FunctionManagerHandler extends JavacAnnotationHandler<FunctionManag
         String applicationPackage = MyApp.getApplicationPackage();
         String application = MyApp.getApplicationName();
         String applicationFunction = MyApp.getApplicationFunction();
+        if (applicationPackage == null || application == null || applicationFunction == null) {
+            Log.print(TAG + "can't find the app config");
+            return;
+        }
         JCTree.JCExpression app = treeMaker.Select(treeMaker.Ident(names.fromString(applicationPackage)), names.fromString(application));
         JCTree.JCExpression selectApp = treeMaker.Select(app, names.fromString(applicationFunction));
 
         JCTree.JCMethodInvocation getApp = treeMaker.Apply(List.<JCTree.JCExpression>nil(), selectApp, List.<JCTree.JCExpression>nil());
-        JCTree.JCExpressionStatement expressionStatement = treeMaker.Exec(getApp);
-
+        JCTree.JCExpressionStatement execGetApp = treeMaker.Exec(getApp);
+        //second part
+        String getResFunction = MyApp.getResourceFunction();
+        JCTree.JCExpression selectResFunction = treeMaker.Select(execGetApp.expr, names.fromString(getResFunction));
+        JCTree.JCMethodInvocation getRes = treeMaker.Apply(List.<JCTree.JCExpression>nil(), selectResFunction, List.<JCTree.JCExpression>nil());
+        JCTree.JCExpressionStatement execGetRes = treeMaker.Exec(getRes);
 
         Log.print(variableDecl.vartype.getClass().getCanonicalName());
         Log.print(variableDecl.vartype.type.getClass().getCanonicalName());
-        //second part
-        JCTree.JCExpression selectRes = treeMaker.Select(expressionStatement.expr, names.fromString("getString"));
+        //third part
+        String resFunctionName = getResFunctionName(variableDecl.vartype.type);
+        String resType = getResType(variableDecl.vartype.type);
+        if (resFunctionName == null || resType == null) {
+            Log.print(TAG + "can't find the type");
+            return;
+        }
+        JCTree.JCExpression selectRes = treeMaker.Select(execGetRes.expr, names.fromString(resFunctionName));
         ListBuffer<JCTree.JCExpression> buffer = new ListBuffer<>();
-        buffer.add(treeMaker.Select(treeMaker.Select(treeMaker.Ident(names.fromString("R")), names.fromString("string")), names.fromString(value)));
+        buffer.add(treeMaker.Select(treeMaker.Select(treeMaker.Ident(names.fromString("R")), names.fromString(resType)), names.fromString(value)));
 
-        JCTree.JCMethodInvocation getRes = treeMaker.Apply(List.<JCTree.JCExpression>nil(), selectRes, buffer.toList());
+        JCTree.JCMethodInvocation get = treeMaker.Apply(List.<JCTree.JCExpression>nil(), selectRes, buffer.toList());
 
-        variableDecl.init = getRes;
+        variableDecl.init = get;
     }
 
     private String getResFunctionName(Type type) {
         if (type.hasTag(TypeTag.CLASS)) {
             Log.print("type " + type.toString());
+            if (type.toString().equals(stringType)) {
+                return "getString";
+            }
         }else if (type.hasTag(TypeTag.BOOLEAN)){
             return "getBoolean";
         }else if (type.hasTag(TypeTag.INT)) {
             return "getInteger";
         }else if (type.hasTag(TypeTag.ARRAY)) {
-
+            Log.print("type arr" + type.toString());
+            if (type.toString().equals(stringArrType)) {
+                return "getStringArray";
+            }else if (type.toString().equals(intArrType)){
+                return "getIntArray";
+            }
         }
 
-        return "getString";
+        return null;
     }
 
     private String getResType(Type type) {
         if (type.hasTag(TypeTag.CLASS)) {
-            type.toString();
+            if (type.toString().equals(stringType)) {
+                return "string";
+            }
         }else if (type.hasTag(TypeTag.BOOLEAN)){
             return "bool";
         }else if (type.hasTag(TypeTag.INT)) {
             return "integer";
         }else if (type.hasTag(TypeTag.ARRAY)) {
-
+            Log.print("type arr" + type.toString());
+            return "array";
         }
-        return "string";
+
+        return null;
     }
 
 }

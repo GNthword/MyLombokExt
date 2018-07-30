@@ -20,6 +20,7 @@ import javax.lang.model.element.TypeElement;
 
 /**
  * Created by miloway on 2018/7/17.
+ * true processor
  */
 
 public class MiloProcessor extends AbstractProcessor {
@@ -97,11 +98,12 @@ public class MiloProcessor extends AbstractProcessor {
 
     private JCTree.JCCompilationUnit toUnit(Element element) {
         TreePath path = trees == null ? null : trees.getPath(element);
-        if (path == null) return null;
+        if (path == null) {
+            return null;
+        }
 
         return (JCTree.JCCompilationUnit) path.getCompilationUnit();
     }
-
 
 
 }

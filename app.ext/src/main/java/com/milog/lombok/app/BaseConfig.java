@@ -46,25 +46,25 @@ class BaseConfig {
     }
 
     String getApplication() {
-        String name = properties.getProperty(APPLICATION_NAME, "");
-        String functionName = properties.getProperty(GET_APPLICATION_FUNCTION_NAME, "");
-        if (name.equals("") && functionName.equals("")) {
-            return "";
+        String name = getApplicationName();
+        String functionName = getApplicationFunction();
+        if (name == null || functionName == null) {
+            return null;
         }
 
         return name + "." + functionName;
     }
 
     String getApplicationName() {
-        return properties.getProperty(APPLICATION_NAME, "");
+        return properties.getProperty(APPLICATION_NAME);
     }
 
     String getApplicationPackage() {
-        return properties.getProperty(APPLICATION_PACKAGE, "");
+        return properties.getProperty(APPLICATION_PACKAGE);
     }
 
     String getApplicationFunction() {
-        return properties.getProperty(GET_APPLICATION_FUNCTION_NAME, "");
+        return properties.getProperty(GET_APPLICATION_FUNCTION_NAME);
     }
 
 
