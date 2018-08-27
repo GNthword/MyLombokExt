@@ -27,7 +27,7 @@ public class JavacProcessor {
         for (JavacNode node : nodes) {
             for (Map.Entry<Class<? extends Annotation>, JavacAnnotationHandler> map : maps.entrySet()) {
                 if (isAnnotationEqual(node.annotation, map.getKey())) {
-                    Log.print("delegate handle");
+                    Log.print("delegate handle ===============");
                     //node.classDecl.accept(new MiloTreeTranslator(context, messager, node));
                     ((JavacAnnotationHandler)map.getValue()).handle(treeMaker, node);
 

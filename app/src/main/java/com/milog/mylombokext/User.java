@@ -11,4 +11,6 @@ public class User {
     @MyGetter
     private String name = "milo king";
 
+    @MyGetter
+    private boolean isMilo = true;
 }

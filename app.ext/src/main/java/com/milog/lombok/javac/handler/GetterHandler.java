@@ -2,7 +2,10 @@ package com.milog.lombok.javac.handler;
 
 import com.milog.annotation.MyGetter;
 import com.milog.lombok.javac.JavacNode;
+import com.milog.lombok.javac.Log;
 import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.code.Type;
+import com.sun.tools.javac.code.TypeTag;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.util.Context;
@@ -16,6 +19,7 @@ import com.sun.tools.javac.util.Name;
 
 public class GetterHandler extends JavacAnnotationHandler<MyGetter>{
 
+    private final String TAG = "GetterHandler";
     public GetterHandler(Context context) {
         super(context);
     }
@@ -23,12 +27,13 @@ public class GetterHandler extends JavacAnnotationHandler<MyGetter>{
     @Override
     public void handle(TreeMaker treeMaker, JavacNode node) {
         JCTree.JCMethodDecl methodDecl = createGetterMethod(treeMaker, node.variableDecl);
+        Log.print(TAG + " " +methodDecl.getName().toString());
         node.classDecl.defs = node.classDecl.defs.prepend(methodDecl);
     }
 
     public JCTree.JCMethodDecl createGetterMethod(TreeMaker treeMaker, JCTree.JCVariableDecl variableDecl) {
 
-        Name methodName = getMethodName(variableDecl.name);
+        Name methodName = getMethodName(variableDecl.name, variableDecl.vartype.type);
         JCTree.JCReturn jcReturn = treeMaker.Return(treeMaker.Select(treeMaker.Ident(names.fromString("this")), variableDecl.getName()));
         JCTree.JCModifiers modifiers = treeMaker.Modifiers(Flags.PUBLIC);
         ListBuffer<JCTree.JCStatement> statements = new ListBuffer<>();
@@ -45,8 +50,17 @@ public class GetterHandler extends JavacAnnotationHandler<MyGetter>{
     }
 
 
-    private Name getMethodName(Name name) {
+    private Name getMethodName(Name name, Type type) {
         String s = name.toString();
-        return names.fromString("get" + s.substring(0, 1).toUpperCase() + s.substring(1, name.length()));
+        String get = "";
+        if (type.hasTag(TypeTag.BOOLEAN)) {
+            if (s.startsWith("is")) {
+                get = s.substring(0, 1).toUpperCase() + s.substring(1, name.length());
+            }
+        }else {
+            get = "get" + s.substring(0, 1).toUpperCase() + s.substring(1, name.length());
+        }
+
+        return names.fromString(get);
     }
 }

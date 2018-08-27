@@ -34,7 +34,9 @@ public class MainActivity extends Activity {
 
         User user = new User();
 
-        tvShow.setText(user.getName() + "\n" + getShowString());
+        if (user.IsMilo()) {
+            tvShow.setText(user.getName() + "\n" + getShowString());
+        }
     }
 
     private String getShowString() {
